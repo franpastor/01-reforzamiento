@@ -1,36 +1,8 @@
-import { useEffect, useRef, useState } from "react"
-
-import { reqResApi } from "../api/reqRes"
-import { ReqResListado, Usuario } from "../interfaces/reqResp"
+import { Usuario } from "../interfaces/reqResp"
+import { useUsuarios } from "../hooks/useUsuarios"
 
 export const Usuarios = () => {
-  const [usuario, setUsuario] = useState<Usuario[]>([])
-
-  const paginaRef = useRef(1)
-
-  useEffect(() => {
-    cargarUsuarios()
-  }, [])
-
-  const cargarUsuarios = () => {
-    reqResApi
-      .get<ReqResListado>("/users", {
-        params: {
-          // con el current se pasa solo el valor en lugar del objeto MutableRefObject completo
-          page: paginaRef.current,
-        },
-      })
-      .then((resp) => {
-        if (resp.data.data.length > 0) {
-          setUsuario(resp.data.data)
-          paginaRef.current++
-        } else {
-          alert("No hay mas registros")
-        }
-      })
-      .catch(console.log)
-    // .catch((err) => console.log(err))
-  }
+  const { usuario, paginaSiguiente, paginaAnterior } = useUsuarios()
 
   const renderItem = ({ id, first_name, avatar, email }: Usuario) => {
     return (
@@ -61,7 +33,11 @@ export const Usuarios = () => {
         </thead>
         <tbody>{usuario.map(renderItem)}</tbody>
       </table>
-      <button className="btn btn-primary" onClick={cargarUsuarios}>
+      <button className="btn btn-primary" onClick={paginaAnterior}>
+        Anteriores
+      </button>
+      &nbsp;
+      <button className="btn btn-primary" onClick={paginaSiguiente}>
         Siguientes
       </button>
     </>
