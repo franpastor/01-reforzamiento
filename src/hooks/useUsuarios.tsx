@@ -1,4 +1,3 @@
-import { AxiosInstance } from "axios"
 import { useEffect, useRef, useState } from "react"
 
 import { reqResApi } from "../api/reqRes"
